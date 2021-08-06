@@ -2,8 +2,14 @@
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
-		<AssemblyVersion>2021.8.6.1243</AssemblyVersion>
-		<FileVersion>2021.8.6.1243</FileVersion>
+		<AssemblyVersion>2021.8.6.1248</AssemblyVersion>
+		<FileVersion>2021.8.6.1248</FileVersion>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Authors>Jonathan 'Pwn' Rainier</Authors>
+		<Company>SkyPBX, LLC.</Company>
+		<Description>PolrSharp is a C# library for @cydrobolt's link shortener, Polr</Description>
 	</PropertyGroup>
 
 	<ItemGroup>
