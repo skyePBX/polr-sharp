@@ -9,6 +9,7 @@ using System.Web;
 using Newtonsoft.Json;
 using PolrSharp.Enums;
 using PolrSharp.Extensions;
+using PolrSharp.Models.Request.V2.Action;
 using PolrSharp.Models.Response.V2.Action;
 
 namespace PolrSharp
@@ -29,7 +30,7 @@ namespace PolrSharp
             {
                 Formatting = Formatting.None,
                 NullValueHandling = NullValueHandling.Ignore,
-                DefaultValueHandling = DefaultValueHandling.Include
+                DefaultValueHandling = DefaultValueHandling.Ignore
             };
         }
 
@@ -55,6 +56,16 @@ namespace PolrSharp
             return await Get<Shorten>(parameters);
         }
 
+        public async Task<ShortenBulk> ShortenBulk(ShortenBulkRequest shortenBulkRequest)
+        {
+            var parameters = new NameValueCollection
+            {
+                {"data", JsonConvert.SerializeObject(shortenBulkRequest, _serializer)}
+            };
+
+            return await Post<ShortenBulk>(default, parameters);
+        }
+
         private async Task<T> Get<T>(NameValueCollection parameters = default)
         {
             var requestClass = typeof(T).GetRequestAttributeFromType();
@@ -62,18 +73,33 @@ namespace PolrSharp
                 return default;
 
             var response = await GenerateHttpClient(requestClass.Path, parameters).GetAsync(string.Empty);
-            if (!response.IsSuccessStatusCode)
-            {
-                DebugLog(response: response);
-                return default;
-            }
+            if (response.IsSuccessStatusCode) return await ParseResponse<T>(response);
 
+            return default;
+        }
+
+        private async Task<T> Post<T>(object data = default, NameValueCollection parameters = default)
+        {
+            var requestClass = typeof(T).GetRequestAttributeFromType();
+            if (requestClass == null || string.IsNullOrEmpty(requestClass.Path))
+                return default;
+
+            var response = await GenerateHttpClient(requestClass.Path, parameters).PostAsJsonNetAsync(string.Empty, data, _serializer);
+            if (response.IsSuccessStatusCode) return await ParseResponse<T>(response);
+
+            return default;
+        }
+
+        private async Task<T> ParseResponse<T>(HttpResponseMessage response)
+        {
             var responseJson = await response.Content.ReadAsStringAsync();
             if (string.IsNullOrEmpty(responseJson))
             {
                 DebugLog(response: response);
                 return default;
             }
+
+            DebugLog(response: response);
 
             try
             {
@@ -82,7 +108,7 @@ namespace PolrSharp
             }
             catch (Exception e)
             {
-                DebugLog($"\"{responseJson}\" // {e.Message}");
+                DebugLog(e.Message);
                 return default;
             }
         }
@@ -123,22 +149,25 @@ namespace PolrSharp
             return httpClient;
         }
 
-        private static void DebugLog(object data = default, HttpResponseMessage response = default)
+        private static async void DebugLog(object data = default, HttpResponseMessage response = default)
         {
-            var message = string.Empty;
             if (response != default)
             {
                 var request = response.RequestMessage;
-                message = $" [{request?.Method}] [{response.StatusCode}] {request?.RequestUri}";
+                Debug.WriteLine($"[{request?.Method}] [{response.StatusCode}] {request?.RequestUri}");
 
                 if (request?.Content != default)
-                    message += $" // {response.RequestMessage?.Content}";
+                {
+                    var requestContent = await request.Content?.ReadAsStringAsync();
+                    Debug.WriteLine($"[REQ] {requestContent}");
+                }
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+                Debug.WriteLine($"[RES] {responseContent}");
             }
 
             if (data != default)
-                message += $" // {data}";
-
-            Debug.WriteLine(message);
+                Debug.WriteLine($"[OBJ] {data}");
         }
     }
 }
