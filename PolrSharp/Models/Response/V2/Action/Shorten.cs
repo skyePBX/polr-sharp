@@ -5,7 +5,7 @@ using PolrSharp.Attributes;
 
 namespace PolrSharp.Models.Response.V2.Action
 {
-    [PolrApiRequest("shorten")]
+    [PolrApiRequest("action/shorten")]
     public class Shorten
     {
         [JsonProperty("action")] public string Action { get; set; }

@@ -4,8 +4,6 @@ using System;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
@@ -41,6 +39,20 @@ namespace PolrSharp
             {
                 {"url_ending", urlEnding}
             });
+        }
+
+        public async Task<Shorten> Shorten(string url, bool isSecret = false, string customEnding = default)
+        {
+            var parameters = new NameValueCollection
+            {
+                {"url", url},
+                {"is_secret", isSecret.ToString()}
+            };
+
+            if (customEnding != default)
+                parameters.Add("custom_ending", customEnding);
+
+            return await Get<Shorten>(parameters);
         }
 
         private async Task<T> Get<T>(NameValueCollection parameters = default)

@@ -40,5 +40,14 @@ namespace PolrSharp.Test
 
             Debug.WriteLine($"[{urlEnding}] {response.Result.LongUrl} // {response.Result.Clicks}");
         }
+
+        [TestMethod]
+        public async Task GetShorten()
+        {
+            Assert.IsNotNull(_client);
+
+            var response = await _client.Shorten($"https://skypbx.com#polr_sharp={DateTime.Now:O}");
+            Assert.IsNotNull(response);
+        }
     }
 }
