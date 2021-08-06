@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2021 Pwn (Jonathan) / SkyPBX, LLC. / All rights reserved.
+﻿// Copyright (c) 2021 Jonathan 'Pwn' Rainier / SkyPBX, LLC. / All rights reserved.
 
 using System;
 using System.Reflection;
