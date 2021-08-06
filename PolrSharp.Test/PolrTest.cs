@@ -46,7 +46,7 @@ namespace PolrSharp.Test
         {
             Assert.IsNotNull(_client);
 
-            var response = await _client.Shorten($"https://skypbx.com#polr_sharp={DateTime.Now:O}");
+            var response = await _client.Shorten($"{_configuration["Tests:Url"]}#polr_sharp={DateTime.Now:O}");
             Assert.IsNotNull(response);
         }
     }
