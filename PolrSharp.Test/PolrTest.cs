@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PolrSharp.Enums;
 using PolrSharp.Models.Request.V2.Action;
 
 namespace PolrSharp.Test
@@ -16,12 +17,14 @@ namespace PolrSharp.Test
         private readonly Polr _client;
         private readonly IConfigurationRoot _configuration;
         private readonly string _testUrl;
+        private readonly string _urlEnding;
 
         public PolrTest()
         {
             var builder = new ConfigurationBuilder().AddUserSecrets<PolrTest>();
             _configuration = builder.Build();
             _testUrl = _configuration["Tests:Url"];
+            _urlEnding = _configuration["Tests:UrlEnding"];
 
             var endPoint = _configuration["Polr:EndPoint"];
             var apiKey = _configuration["Polr:ApiKey"];
@@ -37,13 +40,12 @@ namespace PolrSharp.Test
         {
             Assert.IsNotNull(_client);
 
-            var urlEnding = _configuration["Tests:UrlEnding"];
-            Assert.IsNotNull(urlEnding);
+            Assert.IsNotNull(_urlEnding);
 
-            var response = await _client.Lookup(urlEnding);
+            var response = await _client.Lookup(_urlEnding);
             Assert.IsNotNull(response);
 
-            Debug.WriteLine($"[{urlEnding}] {response.Result.LongUrl} // {response.Result.Clicks}");
+            Debug.WriteLine($"[{_urlEnding}] {response.Result.LongUrl} // {response.Result.Clicks}");
         }
 
         [TestMethod]
@@ -79,6 +81,23 @@ namespace PolrSharp.Test
 
             var response = await _client.ShortenBulk(shortenBulkRequest);
             Assert.IsNotNull(response);
+        }
+
+        [TestMethod]
+        public async Task GetDataLink()
+        {
+            Assert.IsNotNull(_client);
+            Assert.IsNotNull(_testUrl);
+
+            var now = DateTime.Now;
+            var start = now.Subtract(TimeSpan.FromDays(10));
+
+            var responseDay = await _client.Link(_urlEnding, start, now);
+            Assert.IsNotNull(responseDay);
+            var responseCountry = await _client.Link(_urlEnding, start, now, PolrDataLinkStatsType.Country);
+            Assert.IsNotNull(responseCountry);
+            var responseReferer = await _client.Link(_urlEnding, start, now, PolrDataLinkStatsType.Referer);
+            Assert.IsNotNull(responseReferer);
         }
     }
 }

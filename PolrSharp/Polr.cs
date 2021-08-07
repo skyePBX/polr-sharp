@@ -2,6 +2,7 @@
 
 using System;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using PolrSharp.Enums;
 using PolrSharp.Extensions;
 using PolrSharp.Models.Request.V2.Action;
 using PolrSharp.Models.Response.V2.Action;
+using Link = PolrSharp.Models.Response.V2.Data.Link;
 
 namespace PolrSharp
 {
@@ -66,6 +68,23 @@ namespace PolrSharp
             };
 
             return await Post<ShortenBulk>(default, parameters);
+        }
+
+        public async Task<Link> Link(string urlEnding, DateTime start, DateTime end, PolrDataLinkStatsType statsType = PolrDataLinkStatsType.Day)
+        {
+            var statsTypeString = statsType.GetAttributeOfType<DescriptionAttribute>()?.Description;
+            if (string.IsNullOrEmpty(statsTypeString))
+                return default;
+
+            var parameters = new NameValueCollection
+            {
+                {"url_ending", urlEnding},
+                {"left_bound", start.ToString("u")},
+                {"right_bound", end.ToString("u")},
+                {"stats_type", statsTypeString}
+            };
+
+            return await Get<Link>(parameters);
         }
 
         private async Task<T> Get<T>(NameValueCollection parameters = default)
