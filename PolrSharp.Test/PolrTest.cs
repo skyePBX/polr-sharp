@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PolrSharp.Enums;
 using PolrSharp.Models.Request.V2.Action;
 
 namespace PolrSharp.Test
@@ -91,8 +92,12 @@ namespace PolrSharp.Test
             var now = DateTime.Now;
             var start = now.Subtract(TimeSpan.FromDays(10));
 
-            var response = await _client.Link(_urlEnding, start, now);
-            Assert.IsNotNull(response);
+            var responseDay = await _client.Link(_urlEnding, start, now);
+            Assert.IsNotNull(responseDay);
+            var responseCountry = await _client.Link(_urlEnding, start, now, PolrDataLinkStatsType.Country);
+            Assert.IsNotNull(responseCountry);
+            var responseReferer = await _client.Link(_urlEnding, start, now, PolrDataLinkStatsType.Referer);
+            Assert.IsNotNull(responseReferer);
         }
     }
 }

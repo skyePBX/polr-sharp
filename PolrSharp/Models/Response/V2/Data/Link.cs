@@ -26,6 +26,14 @@ namespace PolrSharp.Models.Response.V2.Data
     {
         [JsonProperty("x")] public DateTime Date { get; set; }
 
-        [JsonProperty("y")] public long Clicks { get; set; }
+        [JsonProperty("label")] public string Label { get; set; }
+
+        [JsonProperty("clicks")] public long Clicks { get; set; }
+
+        [JsonProperty("y")]
+        private long ClicksX
+        {
+            set => Clicks = value;
+        }
     }
 }
