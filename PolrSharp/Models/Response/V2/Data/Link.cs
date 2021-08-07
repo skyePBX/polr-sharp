@@ -24,9 +24,13 @@ namespace PolrSharp.Models.Response.V2.Data
 
     public class Datum
     {
-        [JsonProperty("x")] private DateTime X { get; set; }
+        [JsonProperty("x")]
+        private DateTime X
+        {
+            set => Date = value;
+        }
 
-        [JsonProperty("date")] public DateTime Date => X;
+        [JsonProperty("date")] public DateTime Date { get; set; }
 
         [JsonProperty("label")] public string Label { get; set; }
 

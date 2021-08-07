@@ -5,9 +5,9 @@
 
 		<IsPackable>false</IsPackable>
 
-		<AssemblyVersion>2021.8.7.1420</AssemblyVersion>
+		<AssemblyVersion>2021.8.7.1438</AssemblyVersion>
 
-		<FileVersion>2021.8.7.1420</FileVersion>
+		<FileVersion>2021.8.7.1438</FileVersion>
 
 		<UserSecretsId>36477b8d-5694-4695-b2fc-3ceb057e3f78</UserSecretsId>
 	</PropertyGroup>
