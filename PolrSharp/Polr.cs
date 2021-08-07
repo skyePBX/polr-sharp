@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using PolrSharp.Enums;
 using PolrSharp.Extensions;
 using PolrSharp.Models.Request.V2.Action;
@@ -30,7 +31,8 @@ namespace PolrSharp
             {
                 Formatting = Formatting.None,
                 NullValueHandling = NullValueHandling.Ignore,
-                DefaultValueHandling = DefaultValueHandling.Ignore
+                DefaultValueHandling = DefaultValueHandling.Ignore,
+                ContractResolver = new CamelCasePropertyNamesContractResolver()
             };
         }
 
@@ -47,7 +49,7 @@ namespace PolrSharp
             var parameters = new NameValueCollection
             {
                 {"url", url},
-                {"is_secret", isSecret.ToString()}
+                {"is_secret", isSecret.ToString().ToLower()}
             };
 
             if (customEnding != default)

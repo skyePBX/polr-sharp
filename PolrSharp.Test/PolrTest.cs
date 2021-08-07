@@ -52,8 +52,14 @@ namespace PolrSharp.Test
             Assert.IsNotNull(_client);
             Assert.IsNotNull(_testUrl);
 
-            var response = await _client.Shorten($"{_testUrl}#polr_sharp={DateTime.Now:O}");
-            Assert.IsNotNull(response);
+            var url = $"{_testUrl}#polr_sharp={DateTime.Now:O}";
+
+            var responseNoSecret = await _client.Shorten(url);
+            Assert.IsNotNull(responseNoSecret);
+
+            var responseSecret = await _client.Shorten(url, true);
+            Assert.IsNotNull(responseSecret);
+            Assert.IsTrue(responseNoSecret.Result != responseSecret.Result);
         }
 
         [TestMethod]
